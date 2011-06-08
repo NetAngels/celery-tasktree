@@ -1,0 +1,8 @@
+*.py[co]
+.*.swp
+/celery_tasktree.egg-info
+/.project
+/.pydevproject
+/.settings
+/celeryconfig.py
+/env
