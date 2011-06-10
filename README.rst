@@ -50,3 +50,31 @@ Things to be noted:
       task0_result, task1_result = async_result.join()
       task10_result, task11_result = task1_result.async_result.join()
       task110_result = task11_result.async_result.join() 
+
+
+Task with callbacks outside TaskTree
+---------------------------------------
+
+``task_with_callbacks`` decorator can be useful in itself. It decorates
+functions the same way as ordinary ``task`` celery decorator does, but also
+adds an optional ``callback`` parameter.
+
+Callback can be a subtask or a list of subtasks (not the TaskSet). Behind the
+scene, when a task with callback is invoked, it executes function's main code,
+then builds a TaskSet, invokes it asynchronously and attaches the
+``TaskSetResut`` as the attribute named ``async_result`` to function's return
+value.
+
+Simple example is provided below::
+
+    from tasktree import task_with_callbacks
+
+    @task_with_callbacks
+    def some_action(...):
+        ...
+
+    cb1 = some_action.subtask(...)
+    cb2 = some_action.subtask(...)
+    async_result = some_action.delay(..., callback=[cb1, cb2])
+    main_result = async_result.wait()
+    cb1_result, cb2_result = main_result.async_result.join()
