@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='celery-tasktree',
-    version='0.1',
+    version='0.2',
     description='Celery Tasktree module',
     author='NetAngels team',
     author_email='info@netangels.ru',

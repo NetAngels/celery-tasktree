@@ -24,9 +24,13 @@ class TaskTree(object):
             func = node.func
             args = node.args
             kwargs = node.kwargs
+            callback = kwargs.pop('callback', [])
+            if not isinstance(callback, (list, tuple)):
+                callback = [callback]
             subtasks = node._get_child_tasks()
-            task = func.subtask(args=args,
-                    kwargs=dict(kwargs, callback=subtasks))
+            callback += subtasks
+            kwargs = dict(callback=callback, **kwargs)
+            task = func.subtask(args=args, kwargs=kwargs)
             tasks.append(task)
         taskset = TaskSet(tasks)
         result = taskset.apply_async()
@@ -60,8 +64,12 @@ class TaskTreeNode(object):
             func = node.func
             args = node.args
             kwargs = node.kwargs
+            callback = kwargs.pop('callback', [])
+            if not isinstance(callback, (list, tuple)):
+                callback = [callback]
             subtasks = node._get_child_tasks()
-            kwargs = dict(callback=subtasks, **kwargs)
+            callback += subtasks
+            kwargs = dict(callback=callback, **kwargs)
             task = func.subtask(args=args, kwargs=kwargs)
             tasks.append(task)
         return tasks

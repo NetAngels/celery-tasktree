@@ -15,6 +15,7 @@ from celery_tasktree import *
 from nose.tools import *
 import os
 
+
 class CreateDirectoryResult(object):
     def __init__(self, created):
         self.created = created
@@ -35,7 +36,7 @@ def mkdir(directory):
 
 
 def setup():
-    for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0'.split():
+    for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0/1 d0/2 d0'.split():
         if os.path.isdir(dir):
             os.rmdir(dir)
 
@@ -88,3 +89,17 @@ def test_task_tree():
     ok_(os.path.isdir('d1/2/1'))
     ok_(os.path.isdir('d1/2/2'))
     ok_(os.path.isdir('d1/3'))
+
+
+@with_setup(setup, setup)
+def test_task_already_contains_callback():
+    tree = TaskTree()
+    task0 = mkdir.subtask(args=['d0/1'])
+    node0 = tree.add_task(mkdir, args=['d0'], kwargs=dict(callback=task0))
+    node01 = node0.add_task(mkdir, args=['d0/2'])
+    async_res = tree.apply_async()
+    (f0_res,) = async_res.join()
+    eq_(f0_res.created, True)
+    f01_res, f02_res = f0_res.async_result.join()
+    eq_(f01_res.created, True)
+    eq_(f02_res.created, True)
