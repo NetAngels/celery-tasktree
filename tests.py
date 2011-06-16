@@ -36,7 +36,7 @@ def mkdir(directory):
 
 
 def setup():
-    for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0/1 d0/2 d0'.split():
+    for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0/1/2 d0/1 d0/2 d0'.split():
         if os.path.isdir(dir):
             os.rmdir(dir)
 
@@ -103,3 +103,13 @@ def test_task_already_contains_callback():
     f01_res, f02_res = f0_res.async_result.join()
     eq_(f01_res.created, True)
     eq_(f02_res.created, True)
+
+@with_setup(setup, setup)
+def test_push_and_pop():
+    tree = TaskTree()
+    tree.push(mkdir, args=('d0',))
+    tree.push(mkdir, args=('d0/abc/def',))
+    tree.pop()
+    tree.push(mkdir, args=('d0/1',))
+    tree.push(mkdir, args=('d0/1/2',))
+    [res0, res1, res2] = tree.apply_and_join()

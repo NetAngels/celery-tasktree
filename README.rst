@@ -51,6 +51,30 @@ Things to be noted:
       task10_result, task11_result = task1_result.async_result.join()
       task110_result = task11_result.async_result.join() 
 
+Using TaskTree as a simple queue
+-----------------------------------
+
+In many cases a fully fledged tree of tasks would be overkill for you. All you
+need is to add two or more tasks to a queue to make sure that they will be
+executed in order. To make it happens TaskTree has ``push()`` and ``pop()``
+methods which in fact are nothing but wrappers around ``add_task()``.
+The ``push()`` method adds a new task as a child to the perviously created one
+whereas ``pop()`` removes and returns the task from the tail of the task stack.
+Usage sample looks like::
+
+    # create the tree
+    tree = TaskTree()
+    # push a number of tasks into it
+    tree.push(action1, args=[...], kwargs={...})
+    tree.push(action2, args=[...], kwargs={...})
+    tree.push(actionX, args=[...], kwargs={...})
+    tree.pop() # get back action X from the queue
+    tree.push(action3, args=[...], kwargs={...})
+    # apply asynchronously
+    tree.apply_async()
+
+Actions will be executed in order ``action1 -> action2 -> action3``.
+
 
 Task with callbacks outside TaskTree
 ---------------------------------------
