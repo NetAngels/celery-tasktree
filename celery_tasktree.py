@@ -55,14 +55,19 @@ class TaskTree(object):
         a case method returns a list of results in the order which corresponds
         to the order of nodes being pushed.
         """
-        output = []
-        first_result = self.apply_async().join()[0]
-        while True:
-            output.append(first_result)
-            if not getattr(first_result, 'async_result', None):
-                break
-            first_result = first_result.async_result.join()[0]
-        return output
+        return join_tree(self.apply_async())
+
+
+def join_tree(async_result):
+    """ Join to all async results in the tree """
+    output = []
+    first_result = async_result.join()[0]
+    while True:
+        output.append(first_result)
+        if not getattr(first_result, 'async_result', None):
+            break
+        first_result = first_result.async_result.join()[0]
+    return output
 
 
 class TaskTreeNode(object):
