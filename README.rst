@@ -11,7 +11,7 @@ Usage sample
 
 ::
 
-    from tasktree import task_with_callbacks, TaskTree
+    from celery_tasktree import task_with_callbacks, TaskTree
 
     @task_with_callbacks
     def some_action(...):
@@ -91,7 +91,7 @@ value.
 
 Simple example is provided below::
 
-    from tasktree import task_with_callbacks
+    from celery_tasktree import task_with_callbacks
 
     @task_with_callbacks
     def some_action(...):
