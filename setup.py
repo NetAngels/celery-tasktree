@@ -1,14 +1,21 @@
 #!/usr/bin/env python
+import os
 from distutils.core import setup
+
+def read(fname):
+    try:
+        return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    except:
+        return ''
 
 setup(
     name='celery-tasktree',
-    version='0.3',
+    version='0.3.1',
     description='Celery Tasktree module',
     author='NetAngels team',
     author_email='info@netangels.ru',
     url='https://github.com/NetAngels/celery-tasktree',
-    long_description = open('README.rst').read().decode('utf-8'),
+    long_description = read('README.rst'),
     license = 'BSD License',
     py_modules=['celery_tasktree'],
     classifiers=(
