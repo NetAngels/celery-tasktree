@@ -8,4 +8,4 @@ BROKER_PORT = 5672
 BROKER_USER = 'myuser'
 BROKER_PASSWORD = 'mypassword'
 BROKER_VHOST = 'myvhost'
-CELERY_IMPORTS = ("tests", )
+CELERY_IMPORTS = ("test_tasks", )

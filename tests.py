@@ -6,34 +6,15 @@ How to run these tests.
 1. Install celery, then copy ``celeryconfig.py.example`` to ``celeryconfig.py``
 and tune the configuration file. Follow celery "getting started" guide:
 http://docs.celeryproject.org/en/latest/getting-started/index.html
-2. Launch celeryd as ``celeryd --config=celeryconfig_test --loglevel=INFO``.
-Make sure that task "tests.mkdir" is found.
+2. Launch celeryd as ``celeryd --loglevel=INFO``.
+Make sure that task "test_tasks.mkdir" is found.
 3. Run tests with ``nosetests`` command.
 
 """
+import os
 from celery_tasktree import *
 from nose.tools import *
-import os
-
-
-class CreateDirectoryResult(object):
-    def __init__(self, created):
-        self.created = created
-    def __bool__(self):
-        return bool(self.created)
-    def __str__(self):
-        return '%s <%s>' % (id(self), self.created)
-
-@task_with_callbacks
-def mkdir(directory):
-    """ Create directory.
-
-    We return CreateDirectoryResult object intentionally, so that
-    task_with_callbacks decorator can add async_result attribute to this one.
-    """
-    os.mkdir(directory)
-    return CreateDirectoryResult(True)
-
+from test_tasks import mkdir
 
 def setup():
     for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0/1/2 d0/1 d0/2 d0'.split():
