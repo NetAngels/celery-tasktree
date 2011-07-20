@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from celery_tasktree import task_with_callbacks
+from celery.task import Task
+from celery_tasktree import task_with_callbacks, run_with_callbacks
 import os
 
 
@@ -12,6 +13,14 @@ def mkdir(directory):
     """
     os.mkdir(directory)
     return CreateDirectoryResult(True)
+
+
+class MkdirTask(Task):
+
+    @run_with_callbacks
+    def run(self, directory):
+        os.mkdir(directory)
+        return CreateDirectoryResult(True)
 
 
 class CreateDirectoryResult(object):

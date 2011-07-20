@@ -121,6 +121,16 @@ def task_with_callbacks(func, **options):
     "async_result" will be added to that object so that it will be possible to
     join() for that result.
     """
+    return task(run_with_callbacks(func), **options)
+
+
+def run_with_callbacks(func):
+    """Decorator "run with callbacks"
+
+    Function is useful as decorator for :meth:`run` method of tasks which are
+    subclasses of generic :class:`celery.task.Task` and are expected to be used
+    with callbacks.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         callback = kwargs.pop('callback', None)
@@ -131,7 +141,7 @@ def task_with_callbacks(func, **options):
         except AttributeError:
             pass
         return retval
-    return task(wrapper, **options)
+    return wrapper
 
 
 def _exec_callbacks(callback):

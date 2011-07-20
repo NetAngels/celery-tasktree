@@ -7,14 +7,14 @@ How to run these tests.
 and tune the configuration file. Follow celery "getting started" guide:
 http://docs.celeryproject.org/en/latest/getting-started/index.html
 2. Launch celeryd as ``celeryd --loglevel=INFO``.
-Make sure that task "test_tasks.mkdir" is found.
+Make sure that tasks "test_tasks.mkdir" and "test_tasks.MkdirTask" are found.
 3. Run tests with ``nosetests`` command.
 
 """
 import os
 from celery_tasktree import *
 from nose.tools import *
-from test_tasks import mkdir
+from test_tasks import mkdir, MkdirTask
 
 def setup():
     for dir in 'd1/2/1 d1/2/2 d1/2 d1/3 d1 d0/1/2 d0/1 d0/2 d0'.split():
@@ -84,6 +84,15 @@ def test_task_already_contains_callback():
     f01_res, f02_res = f0_res.async_result.join()
     eq_(f01_res.created, True)
     eq_(f02_res.created, True)
+
+@with_setup(setup, setup)
+def test_task_subclass():
+    tree = TaskTree()
+    node0 = tree.add_task(MkdirTask, args=['d0'])
+    node01 = node0.add_task(MkdirTask, args=['d0/1'])
+    tree.apply_and_join()
+    ok_(os.path.isdir('d0'))
+    ok_(os.path.isdir('d0/1'))
 
 @with_setup(setup, setup)
 def test_push_and_pop():

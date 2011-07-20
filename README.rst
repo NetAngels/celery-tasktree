@@ -51,6 +51,32 @@ Things to be noted:
       task10_result, task11_result = task1_result.async_result.join()
       task110_result = task11_result.async_result.join() 
 
+Subclassing `celery.task.Task` with callbacks
+----------------------------------------------
+
+Decorating functions with ``@task`` decorator is the easiest, not not the only
+one way to create new ``Task`` subclasses. Sometimes it is more convenient to
+subclass generic ``celery.task.Task`` class and re-define its ``run()`` method.
+To make such class compatible with TaskTree, ``run`` should be wrapped with
+``celery_tasktree.run_with_callbacks`` decorator. The example below
+illustrates this approach::
+
+    from celery.task import Task
+    from celery_tasktree import run_with_callbacks, TaskTree
+
+    class SomeActionTask(Task):
+
+        @run_with_callbacks
+        def run(self, ...):
+            ...
+
+    def execute_actions():
+        tree = TaskTree()
+        task0 = tree.add_task(SomeActionTask, args=[...], kwargs={...})
+        task01 = task0.add_task(SomeActionTask, args=[...], kwargs={...})
+        tree.apply_async()
+
+
 Using TaskTree as a simple queue
 -----------------------------------
 
@@ -84,7 +110,7 @@ functions the same way as ordinary ``task`` celery decorator does, but also
 adds an optional ``callback`` parameter.
 
 Callback can be a subtask or a list of subtasks (not the TaskSet). Behind the
-scene, when a task with callback is invoked, it executes function's main code,
+scenes, when a task with callback is invoked, it executes function's main code,
 then builds a TaskSet, invokes it asynchronously and attaches the
 ``TaskSetResut`` as the attribute named ``async_result`` to function's return
 value.
