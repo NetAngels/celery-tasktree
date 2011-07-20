@@ -110,7 +110,7 @@ class TaskTreeNode(object):
         return tasks
 
 
-def task_with_callbacks(func):
+def task_with_callbacks(func, **options):
     """ decorator "task with callbacks"
 
     Callback or list of callbacks which go to function in "callbacks" kwarg,
@@ -131,7 +131,7 @@ def task_with_callbacks(func):
         except AttributeError:
             pass
         return retval
-    return task(wrapper)
+    return task(wrapper, **options)
 
 
 def _exec_callbacks(callback):
