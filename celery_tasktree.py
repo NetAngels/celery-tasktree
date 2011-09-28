@@ -61,7 +61,10 @@ class TaskTree(object):
 def join_tree(async_result):
     """ Join to all async results in the tree """
     output = []
-    first_result = async_result.join()[0]
+    results = async_result.join()
+    if not results:
+        return output
+    first_result = results[0]
     while True:
         output.append(first_result)
         if not getattr(first_result, 'async_result', None):

@@ -103,3 +103,8 @@ def test_push_and_pop():
     tree.push(mkdir, args=('d0/1',))
     tree.push(mkdir, args=('d0/1/2',))
     [res0, res1, res2] = tree.apply_and_join()
+
+def test_empty_task_tree():
+    tree = TaskTree()
+    results = tree.apply_and_join()
+    eq_(results, [])
