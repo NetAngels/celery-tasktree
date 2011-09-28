@@ -9,3 +9,5 @@ BROKER_USER = 'myuser'
 BROKER_PASSWORD = 'mypassword'
 BROKER_VHOST = 'myvhost'
 CELERY_IMPORTS = ("test_tasks", )
+CELERY_RESULT_BACKEND = "amqp"
+CELERY_AMQP_TASK_RESULT_EXPIRES = 1000
