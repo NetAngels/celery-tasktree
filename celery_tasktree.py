@@ -17,6 +17,7 @@ class TaskTree(object):
             kwargs = {}
         node = TaskTreeNode(func, args, kwargs)
         self.children.append(node)
+        node.parent = self
         return node
 
     def push(self, func, args=None, kwargs=None):
