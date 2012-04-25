@@ -43,8 +43,8 @@ class TaskTree(object):
             subtasks = node._get_child_tasks()
             callback += subtasks
             kwargs = dict(callback=callback, **kwargs)
-            task = func.subtask(args=args, kwargs=kwargs)
-            tasks.append(task)
+            _task = func.subtask(args=args, kwargs=kwargs)
+            tasks.append(_task)
         taskset = TaskSet(tasks)
         result = taskset.apply_async()
         return result
@@ -109,8 +109,8 @@ class TaskTreeNode(object):
             subtasks = node._get_child_tasks()
             callback += subtasks
             kwargs = dict(callback=callback, **kwargs)
-            task = func.subtask(args=args, kwargs=kwargs)
-            tasks.append(task)
+            _task = func.subtask(args=args, kwargs=kwargs)
+            tasks.append(_task)
         return tasks
 
 
