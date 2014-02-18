@@ -2,8 +2,8 @@ Celery tasktree module
 ======================
 
 celery-tasktree is a module which helps to execute trees of celery tasks
-asynchronously in a particular order. Tasktree comes to the rescue when a
-number of tasks and dependencies grows and when naive callback-based approach
+asynchronously in a particular order. Tasktree comes to the rescue when the
+number of tasks and dependencies grows and when a naive callback-based approach
 becomes hard to understand and maintain.
 
 Usage sample
@@ -40,11 +40,11 @@ According to the code:
 Things to be noted:
 
 - There is no way to stop propagation of the execution and there is no way to
-  pass extra arguments from ancestor to child task. In short, there in only one
+  pass extra arguments from an ancestor to a child task. In short, there in only one
   kind of dependency between tasks: the dependency of execution order.
-- If subtask (function) return value is an object, then a property named
+- If the subtask (function) return value is an object, then a property named
   "async_result" will be added to that object so that it will be possible to
-  join() for. To extend previous example::
+  use ``join()`` to gather the ordered task results. To extend the previous example::
 
       async_result = execute_actions() 
       task0_result, task1_result = async_result.join()
@@ -54,10 +54,10 @@ Things to be noted:
 Subclassing `celery.task.Task` with callbacks
 ----------------------------------------------
 
-Decorating functions with ``@task`` decorator is the easiest, not not the only
+Decorating functions with ``@task`` decorator is the easiest, but not the only
 one way to create new ``Task`` subclasses. Sometimes it is more convenient to
-subclass generic ``celery.task.Task`` class and re-define its ``run()`` method.
-To make such class compatible with TaskTree, ``run`` should be wrapped with
+subclass the generic ``celery.task.Task`` class and re-define its ``run()`` method.
+To make such a class compatible with TaskTree, ``run`` should be wrapped with
 ``celery_tasktree.run_with_callbacks`` decorator. The example below
 illustrates this approach::
 
@@ -82,7 +82,7 @@ Using TaskTree as a simple queue
 
 In many cases a fully fledged tree of tasks would be overkill for you. All you
 need is to add two or more tasks to a queue to make sure that they will be
-executed in order. To make it happens TaskTree has ``push()`` and ``pop()``
+executed in order. To allow this TaskTree has ``push()`` and ``pop()``
 methods which in fact are nothing but wrappers around ``add_task()``.
 The ``push()`` method adds a new task as a child to the perviously created one
 whereas ``pop()`` removes and returns the task from the tail of the task stack.
@@ -105,14 +105,14 @@ Actions will be executed in order ``action1 -> action2 -> action3``.
 Task with callbacks outside TaskTree
 ---------------------------------------
 
-``task_with_callbacks`` decorator can be useful in itself. It decorates
-functions the same way as ordinary ``task`` celery decorator does, but also
+The ``task_with_callbacks`` decorator can be useful in itself. It decorates
+functions the same way the ordinary ``task`` celery decorator does, but also
 adds an optional ``callback`` parameter.
 
 Callback can be a subtask or a list of subtasks (not the TaskSet). Behind the
-scenes, when a task with callback is invoked, it executes function's main code,
+scenes, when a task with a callback is invoked, it executes the function's main code,
 then builds a TaskSet, invokes it asynchronously and attaches the
-``TaskSetResut`` as the attribute named ``async_result`` to function's return
+``TaskSetResut`` as the attribute named ``async_result`` to the function's return
 value.
 
 Simple example is provided below::
