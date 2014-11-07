@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from celery.task import task
-from celery.task.sets import TaskSet
+from celery import group as celery_group
 from functools import wraps
 
 
@@ -45,7 +45,7 @@ class TaskTree(object):
             kwargs = dict(callback=callback, **kwargs)
             _task = func.subtask(args=args, kwargs=kwargs)
             tasks.append(_task)
-        taskset = TaskSet(tasks)
+        taskset = celery_group(*tasks)
         result = taskset.apply_async()
         return result
 
@@ -156,6 +156,6 @@ def _exec_callbacks(callback):
     if callback:
         if not isinstance(callback, (list, tuple)): # not iterable
             callback = [callback,]
-        taskset = TaskSet(tasks=callback)
+        taskset = celery_group(*callback)
         async_result = taskset.apply_async()
     return async_result
